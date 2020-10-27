@@ -1,0 +1,30 @@
+{
+    "server" : {
+        "availability_zone": "nova",
+        "name" : "json-ansible",
+        "image": "c2e4639f-e09f-44e5-81c5-d02c10e1a827",
+        "flavor" : "6c55a99d-fb4f-48e6-a33a-bba2b45bf4c7",
+        "key_name": "ahmed-key",
+        "auto_ip": "yes",
+        "networks":[
+         {
+            "uuid":"c6e9a00f-d439-4d7c-83cf-930a45cde1f2",
+            "tag":"nic1"
+         }
+      ],
+      "meta" : {
+            "hostname":"ansible"
+        },
+      "volumes":[
+         {
+            "uuid":"1411626f-33d6-408e-99f2-4447467d1545",
+            "name":"ansible"
+         },
+         {
+            "uuid":"2afe1ba5-123a-45e8-9434-855f9b88a4f6",
+            "name":"kube-worker"
+         }
+      ]
+    }
+}
+

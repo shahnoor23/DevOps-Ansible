@@ -1,0 +1,107 @@
+---
+  - name: Display the JSON file content
+    shell: cat /root/openstack/jsonAnsible/tasks/openstack-vm-prov.json
+    register: result
+
+  - name: save the Json data to a Variable as a Fact
+    set_fact:
+      jsondata: "{{ result.stdout | from_json }}"
+
+  - name: set name of server
+    set_fact:
+      server_name: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'server.name'
+  - debug:
+       var: server_name
+
+  - name: set network uuid
+    set_fact:
+      network_uuid:  "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: '*.networks[*].uuid'
+  - debug:
+       var: network_uuid
+
+# breaking network uuid to pass in nic tag
+
+  - name: join network uuid
+    set_fact:
+       string_uuid: "{{ network_uuid | join(' ') }}"
+       net_tag: "net-id="
+
+#get length of array
+
+     # - name: get string uuid length
+       # set_fact:
+       # length: "{{ string_uuid|length }}"
+
+  - name: final network uuid
+    set_fact:
+       net_id: "{{ net_tag + string_uuid | join(',net-id=') }}"
+  - debug:
+       var: net_id #final network id to provide
+
+  - name: set volumes name
+    set_fact:
+      volume_name:  "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: '*.volumes[*].name'
+
+  - name: joining volumes name
+    set_fact:
+       pre_volume: "{{ volume_name | join(' ') }}"
+
+  - name: joined volumes name
+    set_fact:
+       volumes: "{{ pre_volume | join(',') }}"
+  - debug:
+       var: volumes
+
+  - name: set meta hostname
+    set_fact:
+       hostname: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'server.meta.hostname'
+  - debug:
+       var: hostname
+
+  - name: set flavor id
+    set_fact:
+      flavor_id: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'server.flavor'
+  - debug:
+       var: flavor_id
+
+  - name: set image id
+    set_fact:
+      image_id: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'server.image'
+  - debug:
+       var: image_id
+
+  - name: set key pair name
+    set_fact:
+      key: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'server.key_name'
+  - debug:
+       var: key
+           
+  - name: set availability zone
+    set_fact:
+      zone: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+       jmesquery: 'server.availability_zone'
+  - debug:
+       var: zone
+
+  - name: set floating ip
+    set_fact:
+      float_ip: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+       jmesquery: 'server.auto_ip'
+  - debug:
+       var: float_ip

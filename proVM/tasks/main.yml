@@ -1,0 +1,29 @@
+---
+ - name: Include vars of auth
+   set_fact:
+     os_auth:
+        project_name: "{{ lookup('env', 'OS_PROJECT_NAME') }}"
+        user_domain_name: "{{ lookup('env', 'OS_USER_DOMAIN_NAME') }}"
+        project_domain_name: "{{ lookup('env', 'OS_PROJECT_DOMAIN_ID') }}"
+        auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+        username: "{{ lookup('env', 'OS_USERNAME') }}"
+        password: "{{ lookup('env', 'OS_PASSWORD') }}"
+
+ - set_fact:
+        float_ip: "{{ 'no' if (float_ip == '') else float_ip }}"
+
+ - name: create a vm
+   openstack.cloud.server:
+     state: present
+     auth: "{{ os_auth }}"
+     name: "{{ server_name }}"
+     image: "{{ image_id }}"
+     timeout: 200
+     key_name: "{{ key | default('') }}"
+     flavor: "{{ flavor_id }}"
+     nics: "{{ net_id }}"
+     userdata: "{{ lookup('file', 'userdata1') }}"
+     volumes: "{{ volumes }}"
+     auto_ip: "{{ float_ip }}"
+     meta:
+       hostname: "{{ hostname }}"
