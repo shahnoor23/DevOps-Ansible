@@ -1,11 +1,13 @@
 ---
   - name: Display the JSON file content
-    shell: cat /root/openstack/jsonAnsible/tasks/openstack-vm-prov.json
+    shell: cat /root/openstack/ansible-middleware/jsonAnsible/tasks/openstack-vm-prov.json
     register: result
 
   - name: save the Json data to a Variable as a Fact
     set_fact:
       jsondata: "{{ result.stdout | from_json }}"
+
+# setting server name
 
   - name: set name of server
     set_fact:
@@ -14,6 +16,8 @@
       jmesquery: 'server.name'
   - debug:
        var: server_name
+
+# setting network id
 
   - name: set network uuid
     set_fact:
@@ -30,17 +34,58 @@
        string_uuid: "{{ network_uuid | join(' ') }}"
        net_tag: "net-id="
 
-#get length of array
-
-     # - name: get string uuid length
-       # set_fact:
-       # length: "{{ string_uuid|length }}"
-
   - name: final network uuid
     set_fact:
        net_id: "{{ net_tag + string_uuid | join(',net-id=') }}"
   - debug:
        var: net_id #final network id to provide
+
+# setting network port name
+
+  - name: set network port
+    set_fact:
+      network_ports:  "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: '*.ports[*].name'
+  - debug:
+       var: network_ports
+
+#  converting to string format and adding port-name tag
+
+  - name: convert to string format
+    set_fact:
+       port_name: "{{ network_ports | join(' ') }}"
+       port_tag: "port-name="
+
+  - name: final network port name
+    set_fact:
+       add_tag: "{{ port_tag + port_name | join(',port-name=') }}"
+  - set_fact:
+      ports: "{{ port_name if (port_name == '') else add_tag }}"
+  - debug:
+       var: ports
+
+# setting security group
+
+  - name: set security group
+    set_fact:
+      security_name:  "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: '*.security_groups[*].name'
+
+# joining strings
+
+  - name: joining security group names
+    set_fact:
+       sec: "{{ security_name | join('') }}"
+
+  - set_fact:
+       sec_names: "{{ sec | join(',') }}"
+
+  - debug:
+       var: sec_names
+
+# setting volume names
 
   - name: set volumes name
     set_fact:
@@ -58,6 +103,8 @@
   - debug:
        var: volumes
 
+# setting metadata 
+
   - name: set meta hostname
     set_fact:
        hostname: "{{ jsondata | json_query(jmesquery) }}"
@@ -65,6 +112,8 @@
       jmesquery: 'server.meta.hostname'
   - debug:
        var: hostname
+
+# setting flavor id
 
   - name: set flavor id
     set_fact:
@@ -74,6 +123,8 @@
   - debug:
        var: flavor_id
 
+# setting image id
+
   - name: set image id
     set_fact:
       image_id: "{{ jsondata | json_query(jmesquery) }}"
@@ -81,6 +132,8 @@
       jmesquery: 'server.image'
   - debug:
        var: image_id
+
+# setting key pair
 
   - name: set key pair name
     set_fact:
@@ -90,6 +143,8 @@
   - debug:
        var: key
            
+# setting availability zone
+
   - name: set availability zone
     set_fact:
       zone: "{{ jsondata | json_query(jmesquery) }}"
@@ -97,6 +152,8 @@
        jmesquery: 'server.availability_zone'
   - debug:
        var: zone
+
+# setting floating ip
 
   - name: set floating ip
     set_fact:
