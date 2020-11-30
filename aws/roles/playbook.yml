@@ -1,0 +1,5 @@
+- hosts: localhost
+  roles:
+        - json
+        - EC2-Creation 
+

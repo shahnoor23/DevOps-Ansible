@@ -1,0 +1,27 @@
+---
+ - name: Create a virtual machine
+   community.vmware.vmware_guest:
+     hostname: "{{ hostname }}"
+     username: "{{ username }}"
+     password: "{{ password }}"
+     validate_certs: no
+     folder: /vm/
+     name: "{{ vm_name }}"
+     state: poweredon
+     guest_id: "{{ guest }}"
+     disk:
+     - filename: "[2TB_SATA_DS0_HOST1] ubunn-101/k8s.vmdk"
+       datastore: 2TB_SATA_DS0_HOST1
+     hardware:
+       memory_mb: "{{ ram }}"
+       num_cpus: "{{ cpu }}"
+     networks:
+     - name: "{{ network_name }}"
+       mac: "{{ mac }}"
+       ip: "{{ ip }}"
+       netmask: "{{ netmask }}"
+       device_type: vmxnet3
+     wait_for_ip_address: yes
+     wait_for_ip_address_timeout: 600
+   delegate_to: localhost
+   register: deploy_vm

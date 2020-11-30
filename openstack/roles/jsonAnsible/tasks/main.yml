@@ -1,6 +1,10 @@
 ---
+  - name: Set Directory
+    set_fact:
+      awd: "{{ ansible_facts.env['PWD'] }}"
+
   - name: Display the JSON file content
-    shell: cat /root/openstack/ansible-middleware/jsonAnsible/tasks/openstack-vm-prov.json
+    shell: cat {{ awd }}/jsonAnsible/tasks/openstack-vm-prov.json
     register: result
 
   - name: save the Json data to a Variable as a Fact
@@ -162,3 +166,13 @@
        jmesquery: 'server.auto_ip'
   - debug:
        var: float_ip
+
+# setting userdata
+
+  - name: set floating ip
+    set_fact:
+      userdata: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+       jmesquery: 'server.userdata'
+  - debug:
+       var: userdata

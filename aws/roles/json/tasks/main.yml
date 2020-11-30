@@ -1,0 +1,76 @@
+---
+  - name: Set Directory
+    set_fact:
+      awd: "{{ ansible_facts.env['PWD'] }}"
+
+  - name: Display the JSON file content
+    shell: cat {{ awd }}/json/tasks/vm-creation.json
+    register: result
+
+  - name: save the Json data to a Variable as a Fact
+    set_fact:
+      jsondata: "{{ result.stdout | from_json }}"
+
+
+# setting ec2 region
+
+  - name: set ec2 region
+    set_fact:
+     region: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'ec2.region'
+  - debug:
+       var: region
+
+
+# setting instance_type
+
+  - name: set instance_type
+    set_fact:
+     instance_type_id: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'ec2.instance_type'
+  - debug:
+       var: instance_type_id
+
+# setting image id
+
+  - name: set image id
+    set_fact:
+      image_id: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'ec2.image'
+  - debug:
+       var: image_id
+
+# setting key pair
+
+  - name: set key pair name
+    set_fact:
+      key: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'ec2.key_name'
+  - debug:
+       var: key
+
+
+# setting assign_public_ip ip
+
+  - name: set floating ip
+    set_fact:
+      public_ip: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+       jmesquery: 'ec2.assign_public_ip'
+  - debug:
+       var: public_ip
+
+
+# setting vpc_Subnet_id
+
+  - name: vpc_subnet_id
+    set_fact:
+      vpc_sub_id: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+       jmesquery: 'ec2.vpc_subnet_id'
+  - debug:
+       var: vpc_sub_id

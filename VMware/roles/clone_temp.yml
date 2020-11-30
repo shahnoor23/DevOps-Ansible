@@ -1,0 +1,23 @@
+- name: create a vm
+  hosts: localhost
+  tasks:
+    - name:  Clone a virtual machine from Linux template and customize
+      community.vmware.vmware_guest:
+        hostname: 10.81.1.34
+        username: Administrator@vsphere.local
+        password: letmein2iVolve!!
+        validate_certs: no
+        datacenter: Datacenters
+        state: present
+        folder: /Datacenters/vm
+        template: UbuntuServer
+        name: test_vm
+        networks:
+          - name: VM Network
+            ip: 10.81.1.72
+            netmask: 255.255.255.0
+            gateway: 10.81.1.250
+            dns_servers:
+            - 8.8.8.8
+        wait_for_ip_address: True
+      delegate_to: localhost

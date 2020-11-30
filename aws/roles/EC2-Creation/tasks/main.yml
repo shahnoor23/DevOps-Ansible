@@ -1,0 +1,10 @@
+- name: ec2 creation
+  ec2:
+    aws_access_key: "{{ AWS_ACCESS_KEY_ID }}"
+    aws_secret_key: "{{ AWS_SECRET_ACCESS_KEY }}"        
+    image: "{{ image_id }}"
+    instance_type: "{{instance_type_id}}"
+    key_name: "{{ key }}"
+    assign_public_ip: "{{ public_ip }}"
+    vpc_subnet_id: "{{vpc_sub_id}}"
+    ec2_region: "{{ region }}"

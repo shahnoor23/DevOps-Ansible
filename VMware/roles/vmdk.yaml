@@ -1,0 +1,29 @@
+- name: Create a virtual machine
+  hosts: localhost
+  tasks:
+    - name: Create a vm
+      community.vmware.vmware_guest:
+        hostname: 10.81.1.201
+        username: root
+        password: letmein2iVolve!!
+        validate_certs: no
+        folder: /vm/
+        name: test_vm_0001
+        state: poweredon
+        guest_id: ubuntu64Guest
+        disk:
+        - filename: "[2TB_SATA_DS0_HOST1] ubunn-101/k8s.vmdk"
+          datastore: 2TB_SATA_DS0_HOST1
+        hardware:
+          memory_mb: 4096
+          num_cpus: 6
+        networks:
+        - name: LANet
+          mac: 90:b1:1c:9b:61:61
+          ip: 10.81.1.66
+          netmask: 255.255.255.0
+          device_type: vmxnet3
+        wait_for_ip_address: yes
+        wait_for_ip_address_timeout: 600
+      delegate_to: localhost
+      register: deploy_vm

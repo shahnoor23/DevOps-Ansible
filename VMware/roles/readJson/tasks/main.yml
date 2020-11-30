@@ -1,0 +1,132 @@
+---
+  - name: Set Directory
+    set_fact:
+      awd: "{{ ansible_facts.env['PWD'] }}"
+
+  - name: Display the JSON file content
+    shell: cat {{ awd }}/readJson/tasks/vm_create.json
+    register: result
+
+  - name: save the Json data to a Variable as a Fact
+    set_fact:
+      jsondata: "{{ result.stdout | from_json }}"
+
+# setting VM name
+
+  - name: Set Name of VM
+    set_fact:
+      vm_name: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'vm.name'
+  - debug:
+       var: vm_name
+
+# Setting hostname
+
+  - name: Setting hostname
+    set_fact:
+      hostname: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'vm.hostname'
+  - debug:
+       var: hostname
+
+# Setting Username
+
+  - name: Setting Username
+    set_fact:
+      username: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'vm.username'
+  - debug:
+       var: username
+
+# Setting Password
+
+  - name: Setting Password
+    set_fact:
+      password: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'vm.password'
+  - debug:
+       var: password
+
+# Setting Guest OS Version
+
+  - name: Setting Guest OS Version
+    set_fact:
+      guest: "{{ jsondata | json_query(jmesquery) }}"
+    vars:
+      jmesquery: 'vm.guest_id'
+  - debug:
+       var: guest
+
+# Setting Network Name
+
+  - name: Setting Network Name
+    set_fact:
+      pre_network_name:  "{{ jsondata | json_query(jmesquery) | join('') }}"
+    vars:
+      jmesquery: '*.networks[*].name'
+  - set_fact:
+      network_name: "{{ pre_network_name | join('') }}"
+  - debug:
+       var: network_name
+
+# setting Network MAC
+
+  - name: Setting Network MAC
+    set_fact:
+      pre_mac:  "{{ jsondata | json_query(jmesquery) | join('') }}"
+    vars:
+      jmesquery: '*.networks[*].mac'
+  - set_fact: 
+      mac: "{{ pre_mac | join('') }}"
+  - debug:
+       var: mac
+
+# setting Network IP
+
+  - name: Setting Network IP
+    set_fact:
+      pre_ip:  "{{ jsondata | json_query(jmesquery) | join('') }}"
+    vars:
+      jmesquery: '*.networks[*].ip'
+  - set_fact:
+      ip: "{{ pre_ip | join('') }}"
+  - debug:
+       var: ip
+
+# setting Network Netmask
+
+  - name: Setting Network Name
+    set_fact:
+      pre_netmask:  "{{ jsondata | json_query(jmesquery) | join('') }}"
+    vars:
+      jmesquery: '*.networks[*].netmask'
+  - set_fact:
+      netmask: "{{ pre_netmask | join('') }}"
+  - debug:
+       var: netmask
+
+# setting Hardware properties
+
+  - name: Setting RAM
+    set_fact:
+      pre_ram:  "{{ jsondata | json_query(jmesquery) | join('') }}"
+    vars:
+      jmesquery: '*.hardware[*].memory_mb'
+  - set_fact:
+      ram: "{{ pre_ram | join('') }}"
+  - debug:
+       var: ram
+
+  - name: Setting CPUs
+    set_fact:
+      pre_cpu:  "{{ jsondata | json_query(jmesquery) | join('') }}"
+    vars:
+      jmesquery: '*.hardware[*].num_cpus'
+  - set_fact:
+      cpu: "{{ pre_cpu | join('') }}"
+  - debug:
+       var: cpu

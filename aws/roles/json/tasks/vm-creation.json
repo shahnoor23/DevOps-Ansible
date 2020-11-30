@@ -1,0 +1,13 @@
+{
+   "ec2" : {
+       
+       "region": "us-east-1",
+       "instance_type": "t2.micro",
+       "key_name": "MyUSE1KP",
+       "image": "ami-096fda3c22c1c990a",
+       "assign_public_ip": "yes",
+       "vpc_subnet_id": "subnet-824b91cf",
+       "count": "1"
+      
+}
+}

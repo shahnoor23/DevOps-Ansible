@@ -1,0 +1,23 @@
+{
+    "vm" : {
+        "name": "vm name",
+        "hostname": "10.81.1.201",
+        "username" : "root",
+        "password": "letmein2iVolve!!",
+        "guest_id": "ubuntu64Guest",
+        "networks":[
+         {
+            "name":"LANet",
+            "mac":"90:b1:1c:9b:61:61",
+            "ip":"10.81.1.66",
+            "netmask":"255.255.255.0"
+         }
+      ],
+       "hardware":[
+         {
+            "memory_mb":"4096",
+            "num_cpus":"6"
+         }
+      ]
+    }
+}

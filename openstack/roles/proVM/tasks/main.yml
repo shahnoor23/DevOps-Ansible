@@ -9,7 +9,8 @@
         username: "{{ lookup('env', 'OS_USERNAME') }}"
         password: "{{ lookup('env', 'OS_PASSWORD') }}"
 
- - set_fact:
+ - name: Checking if user want to assign floating ip
+   set_fact:
      float_ip: "{{ 'no' if (float_ip == '') else float_ip }}"
      
  - set_fact:
@@ -17,11 +18,15 @@
  - set_fact:
      final_nic: "{{ net_id + add_comma }}"
 
- - set_fact:
+ - name: Attaching Network Port if enabled
+   set_fact:
      nicsNports: "{{ net_id if (ports == '') else final_nic }}"
- 
  - debug:
      var: nicsNports
+
+ - name: Checking if security groups are attached
+   set_fact:
+     sec_names: "{{ 'default' if (sec_names == '') else sec_names }}"
 
  - name: create a vm
    openstack.cloud.server:
@@ -32,9 +37,9 @@
      timeout: 200
      key_name: "{{ key | default('') }}"
      flavor: "{{ flavor_id }}"
-     security_groups: "{{ sec_names | default('') }}"
+     security_groups: "{{ sec_names }}"
      nics: "{{ nicsNports }}"
-     userdata: "{{ lookup('file', 'userdata1') }}"
+     userdata: "{{ userdata }}"
      volumes: "{{ volumes }}"
      auto_ip: "{{ float_ip }}"
      meta:
